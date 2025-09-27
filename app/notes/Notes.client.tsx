@@ -7,7 +7,7 @@ import type { Note } from "../../types/note";
 import SearchBox from "../../components/SearchBox/SearchBox";
 import PaginationComp from "../../components/Pagination/Pagination";
 import NoteForm from "../../components/NoteForm/NoteForm";
-import css from "./notes.client.module.css";
+import css from "./page.module.css";
 import Link from "next/link";
 
 interface Props {
