@@ -36,6 +36,7 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
         predicate: (query) => query.queryKey[0] === "notes",
         refetchType: "active",
       });
+      onCancel();
     },
   });
 

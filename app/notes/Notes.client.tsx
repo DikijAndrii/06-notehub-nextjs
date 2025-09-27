@@ -9,6 +9,8 @@ import PaginationComp from "../../components/Pagination/Pagination";
 import NoteForm from "../../components/NoteForm/NoteForm";
 import css from "./page.module.css";
 import Link from "next/link";
+import Modal from "@/components/Modal/Modal";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 interface Props {
   initialPage: number;
@@ -23,14 +25,21 @@ export default function NotesClient({
 }: Props) {
   const [page, setPage] = useState<number>(initialPage);
   const [search, setSearch] = useState<string>(initialSearch);
+  const debouncedSearch = useDebouncedValue(search, 1000);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const queryClient = useQueryClient();
-
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["notes", page, perPage, search],
-    queryFn: () => fetchNotes({ page, perPage, search }),
+    queryKey: ["notes", { page, perPage: perPage, search: debouncedSearch }],
+    queryFn: () =>
+      fetchNotes({ page, perPage: perPage, search: debouncedSearch }),
+    placeholderData: (prev) => prev,
   });
+
+  // const { data, isLoading, isError, isFetching } = useQuery({
+  //   queryKey: ["notes", page, perPage, search],
+  //   queryFn: () => fetchNotes({ page, perPage, search: debouncedSearch }),
+  // });
 
   const createMutation = useMutation({
     mutationFn: (payload: {
@@ -112,7 +121,7 @@ export default function NotesClient({
       )}
 
       {isModalOpen && (
-        <div className={css.modalWrapper}>
+        <Modal onClose={() => setIsModalOpen(false)}>
           <NoteForm
             onSuccess={(values: {
               title: string;
@@ -121,7 +130,7 @@ export default function NotesClient({
             }) => createMutation.mutate(values)}
             onCancel={() => setIsModalOpen(false)}
           />
-        </div>
+        </Modal>
       )}
     </div>
   );

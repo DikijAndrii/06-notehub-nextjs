@@ -1,4 +1,3 @@
-// app/notes/page.tsx (Server Component)
 import { QueryClient } from "@tanstack/react-query";
 import { dehydrate } from "@tanstack/react-query";
 
