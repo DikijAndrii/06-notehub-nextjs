@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchNotes, createNote, deleteNote } from "../../lib/api";
+import { fetchNotes, createNote } from "../../lib/api";
 import type { Note } from "../../types/note";
 import SearchBox from "../../components/SearchBox/SearchBox";
 import PaginationComp from "../../components/Pagination/Pagination";
 import NoteForm from "../../components/NoteForm/NoteForm";
 import css from "./page.module.css";
-import Link from "next/link";
+
 import Modal from "@/components/Modal/Modal";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import NoteList from "@/components/NoteList/NoteList";
 
 interface Props {
   initialPage: number;
@@ -36,11 +37,6 @@ export default function NotesClient({
     placeholderData: (prev) => prev,
   });
 
-  // const { data, isLoading, isError, isFetching } = useQuery({
-  //   queryKey: ["notes", page, perPage, search],
-  //   queryFn: () => fetchNotes({ page, perPage, search: debouncedSearch }),
-  // });
-
   const createMutation = useMutation({
     mutationFn: (payload: {
       title: string;
@@ -50,13 +46,6 @@ export default function NotesClient({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"], exact: false });
       setIsModalOpen(false);
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteNote(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"], exact: false });
     },
   });
 
@@ -97,26 +86,7 @@ export default function NotesClient({
       ) : (
         <>
           {isFetching && <div className={css.fetching}>Loading page...</div>}
-          <ul className={css.list}>
-            {notes.map((note) => (
-              <li key={note.id} className={css.listItem}>
-                <h3 className={css.title}>{note.title}</h3>
-                <p className={css.content}>{note.content}</p>
-                <div className={css.footer}>
-                  <span className={css.tag}>{note.tag}</span>
-                  <Link href={`/notes/${note.id}`} className={css.detailsLink}>
-                    View details
-                  </Link>
-                  <button
-                    className={css.deleteButton}
-                    onClick={() => deleteMutation.mutate(note.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <NoteList notes={notes} />
         </>
       )}
 
