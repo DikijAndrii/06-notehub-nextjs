@@ -13,7 +13,7 @@ import Modal from "@/components/Modal/Modal";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import NoteList from "@/components/NoteList/NoteList";
 
-interface Props {
+interface NotesClientProps {
   initialPage: number;
   initialSearch: string;
   perPage: number;
@@ -23,13 +23,13 @@ export default function NotesClient({
   initialPage,
   initialSearch,
   perPage,
-}: Props) {
+}: NotesClientProps) {
   const [page, setPage] = useState<number>(initialPage);
   const [search, setSearch] = useState<string>(initialSearch);
-  const debouncedSearch = useDebouncedValue(search, 1000);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const debouncedSearch = useDebouncedValue(search, 1000);
   const queryClient = useQueryClient();
+
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["notes", { page, perPage: perPage, search: debouncedSearch }],
     queryFn: () =>

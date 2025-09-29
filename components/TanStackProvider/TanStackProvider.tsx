@@ -5,7 +5,6 @@ import { useState } from "react";
 import {
   QueryClient,
   QueryClientProvider,
-  HydrationBoundary,
   type DehydratedState,
 } from "@tanstack/react-query";
 
@@ -14,12 +13,10 @@ interface Props {
   dehydratedState?: DehydratedState;
 }
 
-export default function TanStackProvider({ children, dehydratedState }: Props) {
+export default function TanStackProvider({ children }: Props) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }
